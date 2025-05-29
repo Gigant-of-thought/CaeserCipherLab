@@ -81,7 +81,7 @@ namespace WinFormsApp2
 
         private void button3_Click(object sender, EventArgs e)
         {
-            handledtext = CaeserCipher.Cipher(currentString, factualKey);
+            handledtext = CaeserCipher.Decipher(currentString, factualKey);
             textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
         }
 

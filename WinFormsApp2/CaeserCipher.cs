@@ -16,9 +16,6 @@ namespace WinFormsApp2
         public static Dictionary<char, double> RussianFreq;
         public static Dictionary<char, double> EnglishFreq;
 
-
-
-
         static CaeserCipher()
         {
             RussianDict = new();
