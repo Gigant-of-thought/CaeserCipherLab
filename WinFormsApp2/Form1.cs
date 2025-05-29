@@ -6,17 +6,11 @@ namespace WinFormsApp2
     {
         StringToHandle currentString;
         int factualKey;
+        string handledtext;
 
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            var tmp = "йцукенгшщзхъфывапролджэ€чсмитьбю".Order().Select(z => "\'" + z + "\', ").ToArray();
-            var Text = CaeserCipher.Cipher(StringToHandle.CleanString("abcdef"), -2);
-            //label1.Text = (-1%26).ToString();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,8 +27,8 @@ namespace WinFormsApp2
                 MessageBox.Show("“екст в неправильном формате", "ќшибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            currentString = cleaned;
             textBox1.Text = cleaned.StringOriginal;
+            currentString = cleaned;
             UpdateFactualKey();
             UnlockButtons();
         }
@@ -62,12 +56,15 @@ namespace WinFormsApp2
 
         private void button2_Click(object sender, EventArgs e)
         {
-            textBox2.Text = DivideString(CaeserCipher.Cipher(currentString, factualKey), 5);
+            handledtext = CaeserCipher.Cipher(currentString, factualKey);
+            textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
         }
 
 
         string DivideString(string str, int chunkSize)
         {
+            if(chunkSize == 0)
+                return str;
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < str.Length; i++)
@@ -84,7 +81,8 @@ namespace WinFormsApp2
 
         private void button3_Click(object sender, EventArgs e)
         {
-            textBox2.Text = DivideString(CaeserCipher.Decipher(currentString, factualKey), 5);
+            handledtext = CaeserCipher.Cipher(currentString, factualKey);
+            textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -107,12 +105,26 @@ namespace WinFormsApp2
                     alphabet = CaeserCipher.RussianAlphabet;
 
                 tmp = tmp % alphabet.Length;
-                if(tmp < 0)
+                if (tmp < 0)
                     tmp = tmp + alphabet.Length;
                 factualKey = tmp;
             }
             label3.Text = factualKey.ToString();
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var tmp = CaeserCipher.BreakCipher(currentString);
+            handledtext = tmp.Item2;
+            textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
+            numericUpDown1.Value = tmp.Item1;
+            factualKey = tmp.Item1;
+            UpdateFactualKey();
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
+        }
     }
 }

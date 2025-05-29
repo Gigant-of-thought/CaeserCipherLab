@@ -38,7 +38,10 @@
             textBox2 = new TextBox();
             label2 = new Label();
             label3 = new Label();
+            numericUpDown2 = new NumericUpDown();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
             SuspendLayout();
             // 
             // textBox1
@@ -95,6 +98,7 @@
             button4.TabIndex = 5;
             button4.Text = "Взломать";
             button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // numericUpDown1
             // 
@@ -146,11 +150,31 @@
             label3.TabIndex = 10;
             label3.Text = "0";
             // 
+            // numericUpDown2
+            // 
+            numericUpDown2.Location = new Point(468, 184);
+            numericUpDown2.Name = "numericUpDown2";
+            numericUpDown2.Size = new Size(42, 23);
+            numericUpDown2.TabIndex = 11;
+            numericUpDown2.Value = new decimal(new int[] { 5, 0, 0, 0 });
+            numericUpDown2.ValueChanged += numericUpDown2_ValueChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(378, 186);
+            label4.Name = "label4";
+            label4.Size = new Size(82, 15);
+            label4.TabIndex = 12;
+            label4.Text = "Размер слова";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(902, 450);
+            Controls.Add(label4);
+            Controls.Add(numericUpDown2);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(textBox2);
@@ -165,6 +189,7 @@
             Text = "Form1";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -180,5 +205,7 @@
         private TextBox textBox2;
         private Label label2;
         private Label label3;
+        private NumericUpDown numericUpDown2;
+        private Label label4;
     }
 }
