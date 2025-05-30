@@ -169,7 +169,6 @@ namespace WinFormsApp2
                 alphabet = RussianAlphabet;
             }
 
-            // Считаем частоты букв в тексте
             var observedFrequencies = new Dictionary<char, double>();
 
             foreach(var c in alphabet)
@@ -182,11 +181,9 @@ namespace WinFormsApp2
                 observedFrequencies[c]++;
             }
 
-            // Нормируем частоты
             foreach(var e in observedFrequencies.Keys)
                 observedFrequencies[e] /= totalLetters;
 
-            // Считаем сумму квадратов отклонений
             double error = 0;
             foreach(var c in alphabet)
             {
