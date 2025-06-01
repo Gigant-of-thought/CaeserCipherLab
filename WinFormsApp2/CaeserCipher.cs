@@ -57,38 +57,54 @@ namespace WinFormsApp2
             };
         }
 
+        public static int CipherKey(StringToHandle source, int key)
+        {
+            /*
+            var alpLen = RussianAlphabet.Length;
+
+            if (source.Language == Language.English || source.Language == Language.Mixed)
+                alpLen = EnglishAlphabet.Length;
+
+            key = key % alpLen;
+
+            if(key < 0)
+                key = key + alpLen;
+            */
+            return key;
+        }
+
+        public static int DecipherKey(StringToHandle source, int key)
+        {
+            return CipherKey(source, -key);
+        }
+
         public static string Cipher(StringToHandle source, int key)
         {
             var result = new StringBuilder();
 
-            Dictionary<char, int> dict;
-            char[] Alphabet;
-
-            if(source.Language == Language.English)
-            {
-                dict = EnglishDict;
-                Alphabet = EnglishAlphabet;
-            }
-            else
-            {
-                dict = RussianDict;
-                Alphabet = RussianAlphabet;
-            }
-
-            key = key % Alphabet.Length;
-
             foreach (char c in source.StringOriginal)
             {
-                var shift = (dict[c] + key) % Alphabet.Length;
-                if (shift < 0)
-                    shift = shift + Alphabet.Length;
-                var tmp = Alphabet[shift];
-                result.Append(tmp);
+                char tmp = '1';
+                if (RussianAlphabet.Contains(c))
+                {
+                    var shift = (RussianDict[c] + key) % RussianAlphabet.Length;
+                    if (shift < 0)
+                        shift = shift + RussianAlphabet.Length;
+                    tmp = RussianAlphabet[shift];
+                }
+                else if (EnglishAlphabet.Contains(c)) {
+                    var shift = (EnglishDict[c] + key) % EnglishAlphabet.Length;
+                    if (shift < 0)
+                        shift = shift + EnglishAlphabet.Length;
+                    tmp = EnglishAlphabet[shift];
+                }
+                if(tmp != '1')
+                    result.Append(tmp);
             }
             
             return result.ToString();
         }
-
+        /*
         public static string Decipher(StringToHandle source, int key)
         {
             var result = new StringBuilder();
@@ -100,11 +116,6 @@ namespace WinFormsApp2
             {
                 dict = EnglishDict;
                 Alphabet = EnglishAlphabet;
-            }
-            else
-            {
-                dict = RussianDict;
-                Alphabet = RussianAlphabet;
             }
 
             key = -key;
@@ -120,8 +131,9 @@ namespace WinFormsApp2
                 result.Append(tmp);
             }
 
-            return result.ToString();
+            return Cipher(source)
         }
+        */
 
         public static (int, string) BreakCipher(StringToHandle source)
         {
@@ -137,7 +149,7 @@ namespace WinFormsApp2
 
             for (int shift = 0; shift < alphabet.Length; shift++)
             {
-                string deciphered = Decipher(source, shift);
+                string deciphered = Cipher(source,  DecipherKey(source, shift));
                 double error = CalculateFrequencyError(deciphered, source.Language);
 
                 if (error < minError)
@@ -147,7 +159,7 @@ namespace WinFormsApp2
                 }
             }
 
-            return (bestShift, Decipher(source, bestShift));
+            return (bestShift, Cipher(source, DecipherKey(source, bestShift)));
         }
 
         private static double CalculateFrequencyError(string text, Language lang)
@@ -228,7 +240,7 @@ namespace WinFormsApp2
                     if (c == 'ё')
                         tmp = 'е';
 
-                    if (CaeserCipher.EnglishDict.ContainsKey(c))
+                    if (CaeserCipher.EnglishDict.ContainsKey(tmp))
                     {
                         if (lang == Language.Russian || lang == Language.Mixed)
                             lang = Language.Mixed;
@@ -236,7 +248,7 @@ namespace WinFormsApp2
                             lang = Language.English;
                         result.Append(tmp);
                     }
-                    else if (CaeserCipher.RussianDict.ContainsKey(c))
+                    else if (CaeserCipher.RussianDict.ContainsKey(tmp))
                     {
                         if (lang == Language.English || lang == Language.Mixed)
                             lang = Language.Mixed;

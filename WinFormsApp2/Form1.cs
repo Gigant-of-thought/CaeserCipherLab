@@ -13,24 +13,46 @@ namespace WinFormsApp2
             InitializeComponent();
         }
 
+
+
+        (int, bool) tryGetKey()
+        {
+            bool suc = true;
+            int key = 0;
+
+            var tmp = textBox3.Text;
+
+            try
+            {
+                key = int.Parse(tmp);
+            }
+            catch
+            {
+                suc = false;
+                MessageBox.Show("Неправильный формат ключа", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return (key,  suc);
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+
+        void handleinput()
         {
+            if (currentString != null)
+                return;
             var cleaned = StringToHandle.CleanString(textBox1.Text);
 
-            if (cleaned.Language == Language.Mixed || cleaned.Language == Language.Invalid)
+            if (cleaned.Language == Language.Invalid)
             {
                 MessageBox.Show("Текст в неправильном формате", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            textBox1.Text = cleaned.StringOriginal;
             currentString = cleaned;
-            UpdateFactualKey();
-            UnlockButtons();
         }
 
         void LockButtons()
@@ -51,19 +73,23 @@ namespace WinFormsApp2
         {
             currentString = null;
             UpdateFactualKey();
-            LockButtons();
+            //LockButtons();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            handledtext = CaeserCipher.Cipher(currentString, factualKey);
+            handleinput();
+            var t = tryGetKey();
+            if (t.Item2 == false)
+                return;
+            handledtext = CaeserCipher.Cipher(currentString, t.Item1);
             textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
         }
 
 
         string DivideString(string str, int chunkSize)
         {
-            if(chunkSize == 0)
+            if (chunkSize == 0)
                 return str;
             StringBuilder sb = new StringBuilder();
 
@@ -81,20 +107,27 @@ namespace WinFormsApp2
 
         private void button3_Click(object sender, EventArgs e)
         {
-            handledtext = CaeserCipher.Decipher(currentString, factualKey);
+            handleinput();
+            var t = tryGetKey();
+            if (t.Item2 == false)
+                return;
+            handledtext = CaeserCipher.Cipher(currentString, CaeserCipher.DecipherKey(currentString, t.Item1));
             textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            UpdateFactualKey();
+            //UpdateFactualKey();
         }
 
         void UpdateFactualKey()
         {
+            /*
             factualKey = 0;
             if (currentString != null)
             {
+                var tmp = CaeserCipher.CipherKey(currentString, (int)numericUpDown1.Value);
+
                 var tmp = (int)numericUpDown1.Value;
 
                 char[] alphabet;
@@ -107,24 +140,44 @@ namespace WinFormsApp2
                 tmp = tmp % alphabet.Length;
                 if (tmp < 0)
                     tmp = tmp + alphabet.Length;
+
                 factualKey = tmp;
             }
-            label3.Text = factualKey.ToString();
+            //label3.Text = factualKey.ToString();
+            */
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
+            handleinput();
+
+            if (currentString.Language == Language.Mixed)
+            {
+                MessageBox.Show("Взлом возможен только русского или только английского текста", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             var tmp = CaeserCipher.BreakCipher(currentString);
             handledtext = tmp.Item2;
             textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
-            numericUpDown1.Value = tmp.Item1;
+            textBox3.Text = tmp.Item1.ToString();
             factualKey = tmp.Item1;
             UpdateFactualKey();
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
+            if(handledtext != null)
+                textBox2.Text = DivideString(handledtext, (int)numericUpDown2.Value);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            currentString = null;
+            factualKey = 0;
+            textBox3.Clear();
+            handledtext = null;
+            textBox1.Clear();
+            textBox2.Clear();
         }
     }
 }
